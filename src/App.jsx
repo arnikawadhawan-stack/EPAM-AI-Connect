@@ -815,11 +815,17 @@ function FAQ() {
 
 // ── REGISTRATION ──────────────────────────────────────────────────────────────
 
+// Replace YOUR_FORM_ID with your Formspree form ID (e.g. "xpwzabcd")
+// Get one free at https://formspree.io — set destination to arnikawadhawan@epam.com
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID'
+
 function Registration() {
   const { t } = useLang()
   const [form, setForm]           = useState({ name: '', email: '', company: '', role: '' })
   const [errors, setErrors]       = useState({})
   const [submitted, setSubmitted] = useState(false)
+  const [sending, setSending]     = useState(false)
+  const [serverError, setServerError] = useState('')
   const ref = useScrollReveal()
 
   const validate = () => {
@@ -834,13 +840,39 @@ function Registration() {
   const handleChange = (field) => (e) => {
     setForm(f => ({ ...f, [field]: e.target.value }))
     if (errors[field]) setErrors(err => ({ ...err, [field]: undefined }))
+    if (serverError) setServerError('')
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const errs = validate()
     if (Object.keys(errs).length) { setErrors(errs); return }
-    setSubmitted(true)
+
+    setSending(true)
+    setServerError('')
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:    form.name,
+          email:   form.email,
+          company: form.company,
+          role:    form.role,
+          _subject: `New Registration: ${form.name} — EPAM AI Connect 2026`,
+        }),
+      })
+      if (res.ok) {
+        setSubmitted(true)
+      } else {
+        const data = await res.json().catch(() => ({}))
+        setServerError(data?.errors?.[0]?.message || 'Something went wrong. Please try again.')
+      }
+    } catch {
+      setServerError('Network error. Please check your connection and try again.')
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
@@ -863,27 +895,30 @@ function Registration() {
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label" htmlFor="reg-name">{t.formName} <span>*</span></label>
-                  <input id="reg-name" className={`form-input${errors.name ? ' error' : ''}`} type="text" placeholder={t.formNamePH} value={form.name} onChange={handleChange('name')} />
+                  <input id="reg-name" className={`form-input${errors.name ? ' error' : ''}`} type="text" placeholder={t.formNamePH} value={form.name} onChange={handleChange('name')} disabled={sending} />
                   {errors.name && <p className="form-error-msg">{errors.name}</p>}
                 </div>
                 <div className="form-group">
                   <label className="form-label" htmlFor="reg-email">{t.formEmail} <span>*</span></label>
-                  <input id="reg-email" className={`form-input${errors.email ? ' error' : ''}`} type="email" placeholder={t.formEmailPH} value={form.email} onChange={handleChange('email')} />
+                  <input id="reg-email" className={`form-input${errors.email ? ' error' : ''}`} type="email" placeholder={t.formEmailPH} value={form.email} onChange={handleChange('email')} disabled={sending} />
                   {errors.email && <p className="form-error-msg">{errors.email}</p>}
                 </div>
               </div>
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label" htmlFor="reg-company">{t.formCompany} <span>*</span></label>
-                  <input id="reg-company" className={`form-input${errors.company ? ' error' : ''}`} type="text" placeholder={t.formCompanyPH} value={form.company} onChange={handleChange('company')} />
+                  <input id="reg-company" className={`form-input${errors.company ? ' error' : ''}`} type="text" placeholder={t.formCompanyPH} value={form.company} onChange={handleChange('company')} disabled={sending} />
                   {errors.company && <p className="form-error-msg">{errors.company}</p>}
                 </div>
                 <div className="form-group">
                   <label className="form-label" htmlFor="reg-role">{t.formRole}</label>
-                  <input id="reg-role" className="form-input" type="text" placeholder={t.formRolePH} value={form.role} onChange={handleChange('role')} />
+                  <input id="reg-role" className="form-input" type="text" placeholder={t.formRolePH} value={form.role} onChange={handleChange('role')} disabled={sending} />
                 </div>
               </div>
-              <button type="submit" className="form-submit">{t.formSubmit}</button>
+              {serverError && <p className="form-error-msg form-server-error">{serverError}</p>}
+              <button type="submit" className="form-submit" disabled={sending}>
+                {sending ? 'Submitting…' : t.formSubmit}
+              </button>
             </form>
           )}
         </div>
