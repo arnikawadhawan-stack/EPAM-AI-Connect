@@ -1402,69 +1402,90 @@ section {
 .share-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.65rem;
+  gap: 0.6rem;
   justify-content: center;
 }
 
-.share-btn {
+/* ── Icon-only circular buttons ── */
+.share-icon-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.55rem 1.1rem;
-  border-radius: 50px;
-  font-size: 0.84rem;
-  font-weight: 600;
-  text-decoration: none;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   border: none;
   cursor: pointer;
-  font-family: var(--font-body);
-  transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+}
+
+.share-icon-btn:hover {
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.share-icon-btn:active {
+  transform: translateY(0) scale(1);
+}
+
+/* Hover tooltip via data-tooltip attribute */
+.share-icon-btn::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: rgba(20, 8, 0, 0.92);
+  border: 1px solid rgba(255, 179, 71, 0.25);
+  color: rgba(255, 240, 200, 0.95);
+  font-size: 0.7rem;
+  font-weight: 600;
   white-space: nowrap;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 20;
+  font-family: var(--font-body);
+  letter-spacing: 0.2px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
-.share-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+.share-icon-btn:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
-.share-btn:active {
-  transform: translateY(0);
-}
-
-/* LinkedIn — brand blue */
+/* LinkedIn */
 .share-linkedin {
   background: #0A66C2;
   color: #fff;
 }
-.share-linkedin:hover {
-  background: #0958a8;
-}
+.share-linkedin:hover { filter: brightness(1.15); }
 
-/* Telegram — brand teal */
+/* Telegram */
 .share-telegram {
   background: #229ED9;
   color: #fff;
 }
-.share-telegram:hover {
-  background: #1a8bbf;
-}
+.share-telegram:hover { filter: brightness(1.15); }
 
-/* Instagram — brand gradient */
+/* Instagram */
 .share-instagram {
   background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
   color: #fff;
-  border: none;
-  position: relative;
 }
-.share-instagram:hover {
-  filter: brightness(1.12);
-}
+.share-instagram:hover { filter: brightness(1.15); }
 .share-instagram.ig-copied {
   background: linear-gradient(45deg, #4ADE80, #22C55E);
   filter: none;
 }
 
-/* Instagram wrapper (needed to position tooltip) */
+/* Instagram wrapper (positions the ig-tooltip) */
 .share-ig-wrap {
   position: relative;
   display: flex;
@@ -1472,7 +1493,7 @@ section {
   align-items: center;
 }
 
-/* Tooltip bubble */
+/* Instagram copy confirmation tooltip */
 .ig-tooltip {
   position: absolute;
   bottom: calc(100% + 10px);
@@ -1485,9 +1506,8 @@ section {
   line-height: 1.5;
   padding: 0.55rem 0.9rem;
   border-radius: 10px;
-  white-space: nowrap;
-  max-width: 260px;
   white-space: normal;
+  max-width: 220px;
   text-align: center;
   z-index: 10;
   pointer-events: none;
@@ -1514,14 +1534,14 @@ section {
 .share-copy {
   background: rgba(255, 255, 255, 0.12);
   color: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 .share-copy:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.22);
 }
 .share-copy.copied {
   background: rgba(74, 222, 128, 0.2);
-  border-color: rgba(74, 222, 128, 0.4);
+  border-color: rgba(74, 222, 128, 0.4) !important;
   color: #4ADE80;
 }
 
@@ -1546,10 +1566,8 @@ section {
 
 @media (max-width: 480px) {
   .share-buttons {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .share-btn {
+    flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
   }
 }

@@ -930,14 +930,14 @@ function ShareButtons({ variant = 'footer' }) {
           href={linkedInUrl}
           target="_blank"
           rel="noreferrer"
-          className="share-btn share-linkedin"
+          className="share-icon-btn share-linkedin"
           aria-label={t.shareLinkedIn}
+          data-tooltip={t.shareLinkedIn}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
             <circle cx="4" cy="4" r="2"/>
           </svg>
-          <span>{t.shareLinkedIn}</span>
         </a>
 
         {/* Telegram */}
@@ -945,28 +945,28 @@ function ShareButtons({ variant = 'footer' }) {
           href={telegramUrl}
           target="_blank"
           rel="noreferrer"
-          className="share-btn share-telegram"
+          className="share-icon-btn share-telegram"
           aria-label={t.shareTelegram}
+          data-tooltip={t.shareTelegram}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M21.95 3.05a1.5 1.5 0 00-1.6-.22L2.1 10.28a1.5 1.5 0 00.08 2.78l4.07 1.35 1.57 4.94a1 1 0 001.7.4l2.35-2.27 4.52 3.33a1.5 1.5 0 002.3-.9l3-14.5a1.5 1.5 0 00-.74-1.36zM10 15.5l-.9 2.7-1.1-3.5 8.6-6.6-6.6 7.4z"/>
           </svg>
-          <span>{t.shareTelegram}</span>
         </a>
 
         {/* Instagram */}
         <div className="share-ig-wrap">
           <button
-            className={`share-btn share-instagram${igCopied ? ' ig-copied' : ''}`}
+            className={`share-icon-btn share-instagram${igCopied ? ' ig-copied' : ''}`}
             onClick={handleInstagram}
             aria-label={t.shareInstagram}
+            data-tooltip={igCopied ? 'Link copied!' : t.shareInstagram}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
               <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" strokeWidth="2"/>
               <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="2"/>
               <circle cx="17.5" cy="6.5" r="1.2"/>
             </svg>
-            <span>{igCopied ? 'Link copied!' : t.shareInstagram}</span>
           </button>
           {igCopied && (
             <div className="ig-tooltip" role="status">
@@ -977,9 +977,10 @@ function ShareButtons({ variant = 'footer' }) {
 
         {/* Copy link */}
         <button
-          className={`share-btn share-copy${copied ? ' copied' : ''}`}
+          className={`share-icon-btn share-copy${copied ? ' copied' : ''}`}
           onClick={handleCopy}
-          aria-label="Copy link"
+          aria-label={copied ? 'Copied!' : 'Copy link'}
+          data-tooltip={copied ? 'Copied!' : 'Copy link'}
         >
           {copied ? (
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -991,7 +992,6 @@ function ShareButtons({ variant = 'footer' }) {
               <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
             </svg>
           )}
-          <span>{copied ? 'Copied!' : 'Copy link'}</span>
         </button>
 
       </div>
