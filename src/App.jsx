@@ -815,16 +815,14 @@ function FAQ() {
 
 // ── REGISTRATION ──────────────────────────────────────────────────────────────
 
-// Replace YOUR_FORM_ID with your Formspree form ID (e.g. "xpwzabcd")
-// Get one free at https://formspree.io — set destination to arnikawadhawan@epam.com
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID'
+const WEB3FORMS_KEY = '5b8247ed-1b08-447f-8c70-4fc51e8db935'
 
 function Registration() {
   const { t } = useLang()
-  const [form, setForm]           = useState({ name: '', email: '', company: '', role: '' })
-  const [errors, setErrors]       = useState({})
-  const [submitted, setSubmitted] = useState(false)
-  const [sending, setSending]     = useState(false)
+  const [form, setForm]               = useState({ name: '', email: '', company: '', role: '' })
+  const [errors, setErrors]           = useState({})
+  const [submitted, setSubmitted]     = useState(false)
+  const [sending, setSending]         = useState(false)
   const [serverError, setServerError] = useState('')
   const ref = useScrollReveal()
 
@@ -851,22 +849,23 @@ function Registration() {
     setSending(true)
     setServerError('')
     try {
-      const res = await fetch(FORMSPREE_ENDPOINT, {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: `New Registration: ${form.name} — EPAM AI Connect 2026`,
           name:    form.name,
           email:   form.email,
           company: form.company,
-          role:    form.role,
-          _subject: `New Registration: ${form.name} — EPAM AI Connect 2026`,
+          role:    form.role || 'Not provided',
         }),
       })
-      if (res.ok) {
+      const data = await res.json()
+      if (data.success) {
         setSubmitted(true)
       } else {
-        const data = await res.json().catch(() => ({}))
-        setServerError(data?.errors?.[0]?.message || 'Something went wrong. Please try again.')
+        setServerError(data.message || 'Something went wrong. Please try again.')
       }
     } catch {
       setServerError('Network error. Please check your connection and try again.')
